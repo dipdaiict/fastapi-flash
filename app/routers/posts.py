@@ -1,3 +1,4 @@
+from .. import oauth2
 from sqlalchemy.orm import Session
 from .. import models, schemas, utils
 from .. database import engine, get_db
@@ -13,7 +14,10 @@ def get_all_data(db: Session = Depends(get_db)):
     return all_posts
 
 @router.post("/create_post", status_code= status.HTTP_201_CREATED, response_model=schemas.PostResponse)
-def create_posts(posts: schemas.CreatePost, db: Session = Depends(get_db)):  
+def create_posts(posts: schemas.CreatePost, db: Session = Depends(get_db), 
+                current_user = Depends(oauth2.get_current_user)):  
+    # if posts. != current_user.username:
+    #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not Authorized to Perform This Operation.")
     new_post = models.Post(title = posts.title, content=posts.content, published=posts.published)    # new_post = models.Post(**posts.dict())
     db.add(new_post)
     db.commit()
@@ -21,7 +25,8 @@ def create_posts(posts: schemas.CreatePost, db: Session = Depends(get_db)):
     return new_post
 
 @router.get("/posts/{id}", response_model=schemas.PostResponse)
-def get_posts(id: int, response: Response, db: Session = Depends(get_db)):
+def get_posts(id: int, response: Response, db: Session = Depends(get_db),
+              current_user = Depends(oauth2.get_current_user)):
     post_info = db.query(models.Post).filter(models.Post.id == id).first()
     if not post_info:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -29,7 +34,8 @@ def get_posts(id: int, response: Response, db: Session = Depends(get_db)):
     return post_info
 
 @router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, db: Session = Depends(get_db),
+                current_user = Depends(oauth2.get_current_user)):
     post_to_delete = db.query(models.Post).filter(models.Post.id == id).first() 
     if post_to_delete is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID: {id} not found.")
@@ -39,7 +45,8 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 # Update The Post by ID:
 @router.put("/posts/{id}")
-def update_post(id: int, updated_post: schemas.CreatePost,  db: Session = Depends(get_db)):
+def update_post(id: int, updated_post: schemas.CreatePost,  db: Session = Depends(get_db),
+                current_user = Depends(oauth2.get_current_user)):
     post= db.query(models.Post).filter(models.Post.id == id)
     post_to_update = post.first()
     if post_to_update == None:
@@ -50,7 +57,8 @@ def update_post(id: int, updated_post: schemas.CreatePost,  db: Session = Depend
 
 # Specific Part Update:
 @router.put("/posts/specific/{id}", response_model=schemas.PostBase)
-def update_post_(id: int, updated_post: schemas.SpecificUpdate, db: Session = Depends(get_db)):
+def update_post_(id: int, updated_post: schemas.SpecificUpdate, db: Session = Depends(get_db), 
+                 current_user = Depends(oauth2.get_current_user)):
     post = db.query(models.Post).filter(models.Post.id == id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID: {id} not found")

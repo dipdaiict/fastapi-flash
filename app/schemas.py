@@ -40,10 +40,8 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    class Config:
+        from_attributes = True
     
-class TokenData(BaseModel):
-    user_id: str
-    user_email: str
-    user_name: str
 class TokenData(BaseModel):
     username: str | None = None
