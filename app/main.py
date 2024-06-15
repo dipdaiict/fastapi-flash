@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .import models, utils
-from .routers import posts, users
+from .routers import posts, users, auth
 from .database import engine, get_db
 
 app = FastAPI()
@@ -13,3 +13,4 @@ def read_root():
 
 app.include_router(posts.router)
 app.include_router(users.router)
+app.include_router(auth.router)

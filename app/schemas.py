@@ -6,7 +6,6 @@ class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
-    
     class Config:
         from_attributes = True
         
@@ -17,10 +16,8 @@ class SpecificUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
     published: Optional[bool] = None
-    
     class Config:
         from_attributes = True
-
 class PostResponse(PostBase):
     created_at: datetime = None
     class Config:
@@ -30,9 +27,23 @@ class CreateUser(BaseModel):
     email: EmailStr
     username: str
     password: str
-
 class UserOut(BaseModel):
     id: int
     email: EmailStr
     username: str
-    created_at: datetime
+    created_at: datetime   
+    
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+    
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    
+class TokenData(BaseModel):
+    user_id: str
+    user_email: str
+    user_name: str
+class TokenData(BaseModel):
+    username: str | None = None

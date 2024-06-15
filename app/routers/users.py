@@ -8,12 +8,18 @@ router = APIRouter(prefix="/user", tags=['USERS'])
 
 @router.post("/createuser", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def createuser(user: schemas.CreateUser, db: Session = Depends(get_db)):
+    existing_email = db.query(models.User).filter(models.User.email == user.email).first()
+    if existing_email:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists.")
+    existing_username = db.query(models.User).filter(models.User.username == user.username).first()
+    if existing_username:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists.")
     hashed_password = utils.hash(user.password)
-    user.password = hashed_password  # Update the hashed pass in pydantic data
+    user.password = hashed_password 
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
-    db.refresh(new_user)  # Retreive this newly created post and store with in new_post variable...
+    db.refresh(new_user) 
     return new_user
 
 @router.get("/{username}", response_model=schemas.UserOut)
