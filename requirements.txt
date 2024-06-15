@@ -1,4 +1,6 @@
-fastapi[all]
+pyjwt
 psycopg2
 SQLAlchemy
+fastapi[all]
+passlib[bcrypt]
 pydantic-settings

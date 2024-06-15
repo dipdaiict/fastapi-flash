@@ -1,6 +1,6 @@
-from pydantic import BaseModel
-from typing import Optional, List
 from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, conint
 
 class PostBase(BaseModel):
     title: str
@@ -25,3 +25,14 @@ class PostResponse(PostBase):
     created_at: datetime = None
     class Config:
         from_attributes = True
+        
+class CreateUser(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    username: str
+    created_at: datetime
