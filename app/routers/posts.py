@@ -4,19 +4,28 @@ from .. import models, schemas, utils
 from .. database import engine, get_db
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Response, HTTPException, status, Depends, APIRouter
+from typing import List, Optional
 
 router = APIRouter(tags=['POSTS'])  
 
 @router.get("/posts")
-def get_all_data(db: Session = Depends(get_db)):
+def get_all_data(db: Session = Depends(get_db), skip:int=2, limit:int=3):
     # print(db.query(models.Post))  # To See Which Query Executed behind the Backend.
-    all_posts = db.query(models.Post).all()
+    # all_posts = db.query(models.Post).all()
+    all_posts = db.query(models.Post).offset(skip).limit(limit).all()  # Here Implemented the Skip & Limit Parameters
     return all_posts
+
+# @router.get("/posts")
+# def get_all_posts(skip: int = 0, limit: int = 3, search: Optional[str] = None, db: Session = Depends(get_db)):
+#     query = db.query(models.Post)
+#     if search:
+#         query = query.filter(models.Post.title.ilike(f"%{search}%")) # or query = query.filter(models.Post.title.contains(search))
+#     posts = query.offset(skip).limit(limit).all()
+#     return posts
 
 @router.post("/create_post", status_code= status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_posts(posts: schemas.CreatePost, db: Session = Depends(get_db), 
                 current_user = Depends(oauth2.get_current_user)):  
-    print(f"Current User: {current_user.username} | Current User Email: {current_user.email}")
     new_post = models.Post(title = posts.title, content=posts.content, published=posts.published, user_id=current_user.user_id)    # new_post = models.Post(**posts.dict())
     db.add(new_post)
     db.commit()
@@ -74,3 +83,12 @@ def update_post_(id: int, updated_post: schemas.SpecificUpdate, db: Session = De
     db.commit()
     db.refresh(post_to_update)
     return post_to_update
+
+
+@router.get("/pw_meta", response_model=List[schemas.PostMeta])
+def get_all_data(db: Session = Depends(get_db), 
+                 current_user: models.User = Depends(oauth2.get_current_user)):
+    all_posts = db.query(models.Post).filter(models.Post.user_id == current_user.user_id).all()
+    if not all_posts:
+        raise HTTPException(status_code=404, detail="No posts found for the current user")
+    return all_posts

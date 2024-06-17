@@ -31,8 +31,9 @@ class UserOut(BaseModel):
     id: int
     email: EmailStr
     username: str
-    created_at: datetime   
-    
+    created_at: datetime      
+    # class Config:  # Edited
+    #     from_attributes = True
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -48,3 +49,7 @@ class TokenData(BaseModel):
     email:str | None = None
     user_id: int = None
     
+class PostMeta(PostBase):   # This Return Post Data with Owner Meta data:
+    user: UserOut    # Same for What relation you mapped in models.
+    class Config:
+        from_attributes = True
