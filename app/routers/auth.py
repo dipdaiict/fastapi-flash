@@ -14,7 +14,7 @@ def login(login_credentials: UserLogin, db: Session = Depends(get_db)):
          raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid email or password. Please check your credentials and try again.")
     if not utils.verify(login_credentials.password, user.password):
           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid password. Please check your credentials and try again.")
-    token = oauth2.create_access_token(data = {"username": user.username})  # We Just Ony Provide User Name
+    token = oauth2.create_access_token(data = {"username": user.username, "email": user.email, "user_id": user.id})  # We Just Ony Provide User Name
     return {"access_token": token, "token_type": "Bearer"}
 
 @router.post('/login_form', response_model = Token)

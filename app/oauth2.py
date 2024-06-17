@@ -30,9 +30,11 @@ def verify_access_token(token:str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username:str = payload.get("username")
+        email:str = payload.get("email")
+        user_id:int = payload.get("user_id")
         if username is None:
             raise credentials_exception
-        token_data = schemas.TokenData(username=username)
+        token_data = schemas.TokenData(username=username, email=email, user_id=user_id)
     except ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Session expired. Please log in again.",
