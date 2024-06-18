@@ -16,6 +16,8 @@ origins = [
     "https://*.google.com"  # Allow all subdomains of google.com
 ]
 
+# origins = ["*"]  # For Every Domain can requests.
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
