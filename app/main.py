@@ -2,8 +2,27 @@ from fastapi import FastAPI
 from .import models, utils
 from .routers import posts, users, auth
 from .database import engine, get_db
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "https://www.google.com",
+    "https://accounts.google.com",
+    "https://*.google.com"  # Allow all subdomains of google.com
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 models.Base.metadata.create_all(bind=engine)   # No Longer required after alembic setup first time used.
           
