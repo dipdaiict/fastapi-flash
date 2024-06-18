@@ -5,7 +5,7 @@ from .database import engine, get_db
 
 app = FastAPI()
 
-models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)   # No Longer required after alembic setup first time used.
           
 @app.get("/")  
 def read_root():  
