@@ -1,0 +1,15 @@
+[Unit]
+Description=demo fastapi application  # Description of the service
+After=network.target  # Start the service after the network is up
+
+[Service]
+User=dippatel  # Run the service as the 'dippatel' user
+Group=dippatel  # Run the service under the 'dippatel' group
+WorkingDirectory=/home/dippatel/app/src/fastapi-flash  # Set the working directory for the service
+Environment="PATH=/home/dippatel/app/venv/bin"  # Set the PATH environment variable
+EnvironmentFile=/home/dippatel/.env  # Load additional environment variables from this file
+ExecStart=/home/dippatel/app/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+# Command to start the service
+
+[Install]
+WantedBy=multi-user.target  # Install this service for multi-user systems
