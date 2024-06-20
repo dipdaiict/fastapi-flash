@@ -314,7 +314,7 @@ To create a systemd service file, you need root permissions. You can use `sudo` 
     sudo systemctl status fastapi-flash.service
     ```
 
-If you encounter any issues, you can check the logs for the service using:
+9. **If you encounter any issues, you can check the logs for the service using**:
 
     ```bash
     journalctl -u fastapi-flash.service -f -n 50
