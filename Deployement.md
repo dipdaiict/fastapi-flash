@@ -252,5 +252,71 @@ Beofre setting pleasa add also the required environment variable in .env file in
     ```bash
     source ~/.profile
     ```
+### Set The Service up when you boot the system:
+
+To create a systemd service file, you need root permissions. You can use `sudo` to create and edit the service file. Here’s how to do it:
+
+1. **Create the service file with sudo**:
+
+    ```bash
+    sudo touch /etc/systemd/system/fastapi-flash.service
+    ```
+
+2. **Edit the service file with sudo**:
+
+    ```bash
+    sudo nano /etc/systemd/system/fastapi-flash.service
+    ```
+
+3. **Add the following content to the service file**:
+
+    ```ini
+    [Unit]
+    Description=FastAPI Flash Service
+    After=network.target
+    
+    [Service]
+    User=dippatel
+    Group=www-data
+    WorkingDirectory=/home/dippatel/app/src/fastapi-flash
+    EnvironmentFile=/home/dippatel/app/.env
+    ExecStart=/home/dippatel/app/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8080
+    Restart=always
+    
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+4. **Save and close the editor** (Ctrl+O to write out, then Ctrl+X to exit in nano).
+
+5. **Reload systemd to recognize the new service**:
+
+    ```bash
+    sudo systemctl daemon-reload
+    ```
+
+6. **Start the service**:
+
+    ```bash
+    sudo systemctl start fastapi-flash.service
+    ```
+
+7. **Enable the service to start on boot**:
+
+    ```bash
+    sudo systemctl enable fastapi-flash.service
+    ```
+
+8. **Check the status of the service**:
+
+    ```bash
+    sudo systemctl status fastapi-flash.service
+    ```
+
+If you encounter any issues, you can check the logs for the service using:
+
+    ```bash
+    journalctl -u fastapi-flash.service -f -n 50
+    ```
 
 ---
