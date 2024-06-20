@@ -1,5 +1,3 @@
-
-
 ---
 
 # How to Install and Deploy a Backend on Ubuntu Server
@@ -66,16 +64,29 @@ sudo -i -u postgres
 
 To set a password for the postgres user:
 
-```bash
-\password postgres
-```
+1. Access the PostgreSQL interactive terminal:
 
-Exit the postgres user session:
+    ```bash
+    psql
+    ```
 
-```bash
-\q
-exit
-```
+2. Set the password for the postgres user:
+
+    ```sql
+    \password postgres
+    ```
+
+3. Exit the `psql` terminal:
+
+    ```sql
+    \q
+    ```
+
+4. Exit the postgres user session:
+
+    ```bash
+    exit
+    ```
 
 ## Configure PostgreSQL Authentication
 
@@ -115,7 +126,24 @@ Navigate to your project directory and set up a virtual environment:
 ```bash
 mkdir ~/app && cd ~/app
 virtualenv venv
+```
+
+### Activate the Virtual Environment
+
+To activate the virtual environment:
+
+```bash
 source venv/bin/activate
+```
+
+When the virtual environment is activated, your shell prompt will change to indicate that you're now working within the virtual environment.
+
+### Deactivate the Virtual Environment
+
+To deactivate the virtual environment when done:
+
+```bash
+deactivate
 ```
 
 Clone your repository or set up your application:
