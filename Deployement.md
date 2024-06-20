@@ -217,4 +217,40 @@ sudo ss -tulpn | grep :8080
 sudo kill <PID>
 ```
 
+#### Copy a Directory
+
+To copy directories, use the `-r` (recursive) flag to copy all the contents of the directory:
+
+```bash
+cp -r /path/to/source/directory /path/to/destination
+```
+
+### Load Environment Variables on Login/System Reboot
+
+To ensure that your environment variables are loaded every time you log in, add the following line to your `.profile` file:
+
+Beofre setting pleasa add also the required environment variable in .env file in your app directory.
+
+1. Open the `.profile` file in your home directory:
+
+    ```bash
+    nano ~/.profile
+    ```
+
+2. Add the following line to the file:
+
+    ```bash
+    set -o allexport; source /home/<username>/app/.env; set +o allexport
+    ```
+
+    Replace `<username>` with your actual username.
+
+3. Save and exit the editor (Ctrl+O to write out, then Ctrl+X to exit in nano).
+
+4. Apply the changes:
+
+    ```bash
+    source ~/.profile
+    ```
+
 ---
