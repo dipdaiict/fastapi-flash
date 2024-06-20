@@ -319,5 +319,135 @@ To create a systemd service file, you need root permissions. You can use `sudo` 
     ```bash
     journalctl -u fastapi-flash.service -f -n 50
     ```
+#### Install and Configure NGINX
 
+1. **Install NGINX:**
+
+   ```bash
+   sudo apt update
+   sudo apt install nginx
+   ```
+
+2. **Configure NGINX:**
+
+   - Create or edit your NGINX site configuration file in `/etc/nginx/sites-available/`:
+
+     ```bash
+     sudo nano /etc/nginx/sites-available/your_site
+     ```
+
+     Add the following configuration:
+
+     ```nginx
+     server {
+         listen 80 default_server;
+         listen [::]:80 default_server;
+         server_name _; # Replace with your specific domain name like sanjeev.com
+
+         location / {
+             proxy_pass http://localhost:8000;
+             proxy_http_version 1.1;
+             proxy_set_header X-Real-IP $remote_addr;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection 'upgrade';
+             proxy_set_header Host $http_host;
+             proxy_set_header X-NginX-Proxy true;
+             proxy_redirect off;
+         }
+
+         error_page 404 /404.html;
+         location = /404.html {
+             root /usr/share/nginx/html;
+             internal;
+         }
+     }
+     ```
+
+3. **Create a Symbolic Link:**
+
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/your_site /etc/nginx/sites-enabled/
+   ```
+
+4. **Test NGINX Configuration:**
+
+   ```bash
+   sudo nginx -t
+   ```
+
+5. **Restart NGINX:**
+
+   ```bash
+   sudo systemctl restart nginx
+   ```
+#### 2. Firewall Configuration
+
+1. **Check UFW Status:**
+
+   ```bash
+   sudo ufw status
+   ```
+
+2. **Allow Necessary Ports:**
+
+   ```bash
+   sudo ufw allow http
+   sudo ufw allow https
+   sudo ufw allow ssh
+   sudo ufw allow 5432
+   ```
+
+3. **Enable UFW:**
+
+   ```bash
+   sudo ufw enable
+   ```
+
+4. **Verify UFW Status:**
+
+   ```bash
+   sudo ufw status
+   ```
+
+   Ensure the output includes:
+
+   ```plaintext
+   Status: active
+
+   To                         Action      From
+   --                         ------      ----
+   Nginx Full                 ALLOW       Anywhere
+   80/tcp                     ALLOW       Anywhere
+   443                        ALLOW       Anywhere
+   22/tcp                     ALLOW       Anywhere
+   5432                       ALLOW       Anywhere
+   Nginx Full (v6)            ALLOW       Anywhere (v6)
+   80/tcp (v6)                ALLOW       Anywhere (v6)
+   443 (v6)                   ALLOW       Anywhere (v6)
+   22/tcp (v6)                ALLOW       Anywhere (v6)
+   5432 (v6)                  ALLOW       Anywhere (v6)
+   ```
+
+5. **Delete a UFW Rule:**
+
+   - **Find the Rule Number:**
+
+     ```bash
+     sudo ufw status numbered
+     ```
+
+     This will list all rules with their respective numbers.
+
+   - **Delete the Rule:**
+
+     ```bash
+     sudo ufw delete <rule_number>
+     ```
+
+     Replace `<rule_number>` with the number of the rule you want to delete. For example, to delete rule number 3:
+
+     ```bash
+     sudo ufw delete 3
+     ```
 ---
