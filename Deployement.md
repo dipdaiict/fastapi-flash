@@ -229,7 +229,8 @@ cp -r /path/to/source/directory /path/to/destination
 
 To ensure that your environment variables are loaded every time you log in, add the following line to your `.profile` file:
 
-Beofre setting pleasa add also the required environment variable in .env file in your app directory.
+Beofre setting please add also the required environment variable in .env file in your app directory. 
+Ensure your .env file contains the following environment variables without any spaces around the = sign: Example like: database_hostname=your_database_hostname
 
 1. Open the `.profile` file in your home directory:
 
