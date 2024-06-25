@@ -9,10 +9,11 @@ from typing import List, Optional
 router = APIRouter(tags=['POSTS'])  
 
 @router.get("/posts")
-def get_all_data(db: Session = Depends(get_db), skip:int=2, limit:int=3):
+def get_all_data(db: Session = Depends(get_db)):
+# def get_all_data(db: Session = Depends(get_db), skip:int=2, limit:int=3):
     # print(db.query(models.Post))  # To See Which Query Executed behind the Backend.
     # all_posts = db.query(models.Post).all()
-    all_posts = db.query(models.Post).offset(skip).limit(limit).all()  # Here Implemented the Skip & Limit Parameters
+    all_posts = db.query(models.Post).all()  # Here Implemented the Skip & Limit Parameters
     return all_posts
 
 # @router.get("/posts")
@@ -53,7 +54,21 @@ def delete_post(id: int, db: Session = Depends(get_db),
     db.commit()
     return JSONResponse(content={"message": "Post successfully deleted."}, status_code=status.HTTP_204_NO_CONTENT)
 
-# Update The Post by ID:
+# # Update The Post by ID:
+# @router.put("/posts/{id}", response_model=schemas.PostResponse)
+# def update_post(id: int, updated_post: schemas.CreatePost, db: Session = Depends(get_db),
+#                 current_user: models.User = Depends(oauth2.get_current_user)):
+#     post_query = db.query(models.Post).filter(models.Post.id == id)
+#     post_to_update = post_query.first()
+#     if post_to_update is None:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID: {id} not found.")
+#     if post_to_update.user_id != current_user.user_id:
+#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this post.")
+#     post_to_update.update(updated_post.dict(), synchronize_session=False)
+#     db.commit()
+#     db.refresh(post_to_update)
+#     return post_to_update
+
 @router.put("/posts/{id}", response_model=schemas.PostResponse)
 def update_post(id: int, updated_post: schemas.CreatePost, db: Session = Depends(get_db),
                 current_user: models.User = Depends(oauth2.get_current_user)):
@@ -63,7 +78,12 @@ def update_post(id: int, updated_post: schemas.CreatePost, db: Session = Depends
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with ID: {id} not found.")
     if post_to_update.user_id != current_user.user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this post.")
-    post_to_update.update(updated_post.dict(), synchronize_session=False)
+
+    # Update the attributes of the post_to_update object
+    post_to_update.title = updated_post.title
+    post_to_update.content = updated_post.content
+    post_to_update.published = updated_post.published
+
     db.commit()
     db.refresh(post_to_update)
     return post_to_update

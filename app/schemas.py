@@ -19,7 +19,9 @@ class SpecificUpdate(BaseModel):
     class Config:
         from_attributes = True
 class PostResponse(PostBase):
+    id: Optional[int] = None
     created_at: datetime = None
+    user_id: Optional[int] = None
     class Config:
         from_attributes = True
         

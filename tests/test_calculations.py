@@ -44,8 +44,8 @@ def test_withdraw(bank_account):
 
 # Test withdrawing an amount from the bank account
 def test_withdraw2(bank_account):
-    bank_account.withdraw(60)
-    assert bank_account.balance == 30
+    bank_account.withdraw(50)
+    assert bank_account.balance == 0
 
 # Test withdrawing an amount that leaves a balance of 10
 def test_withdraw_not_enough(bank_account):

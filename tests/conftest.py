@@ -8,6 +8,7 @@ from app.database import Base, get_db
 from app.oauth2 import create_access_token
 from app import models
 from jose import jwt, JWTError
+from app import schemas
 
 SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}_test'
 
@@ -48,7 +49,7 @@ def test_user2(client):
     new_user['password'] = user_data['password']
     return new_user
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def test_user(client):
     user_data = {"email": "mdpatel123@gmail.com",
                  "password": "mdpatel123", "username": "mdpatel123"}
@@ -62,11 +63,11 @@ def decode_jwt_token(token: str):
     payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
     return payload
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def token(test_user):
     return create_access_token({"user_id": test_user['id'], "email": test_user['email'], "username": test_user['username']})
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def authorized_client(client, token):
     client.headers = {
         **client.headers,
