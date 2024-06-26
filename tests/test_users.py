@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 def test_root(client: TestClient):
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {'Message': 'Welcome to the Home Page.'}
+    assert response.json() == {'Message': 'Welcome to the Home Page. CICD Works'}
 
 def test_create_user(client: TestClient):
     res = client.post(

@@ -15,7 +15,7 @@ jobs:
       SECRET_KEY: ${{secrets.SECRET_KEY}}
       ALGORITHM: ${{secrets.ALGORITHM}}
       EXPIRATION_TIME_OF_TOKEN: ${{secrets.EXPIRATION_TIME_OF_TOKEN}}
-      
+
     services:
       postgres:
         image: postgres
@@ -46,7 +46,7 @@ jobs:
 
       - name: Install all dependencies
         run: pip install -r requirements.txt
-        
+
       - name: Test with pytest
         run: |
           pip install pytest
@@ -59,16 +59,38 @@ jobs:
   docker_build_and_publish:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi-flash:latest .
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi-flash:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/fastapi-flash:latest
+          cache-to: type=inline
 
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi-flash:latest
+  deploy:
+    needs: docker_build_and_publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to AWS EC2 Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_PRIVATE_KEY }}
+          script: |
+            whoami
+            echo ${{ secrets.PROD_PASSWORD }} | sudo -S -u dippatel bash -c '
+              cd /home/dippatel/app/src/fastapi-flash
+              git pull
+              echo ${{ secrets.PROD_PASSWORD }} | sudo -S systemctl restart fastapi-flash
+            '
