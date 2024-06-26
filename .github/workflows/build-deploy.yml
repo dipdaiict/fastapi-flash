@@ -15,6 +15,7 @@ jobs:
       SECRET_KEY: ${{secrets.SECRET_KEY}}
       ALGORITHM: ${{secrets.ALGORITHM}}
       EXPIRATION_TIME_OF_TOKEN: ${{secrets.EXPIRATION_TIME_OF_TOKEN}}
+
     services:
       postgres:
         image: postgres
@@ -51,3 +52,20 @@ jobs:
       - name: Just Random Printing
         run: |
           echo "Workflow Running... Well done"
+
+  docker_build_and_publish: 
+          needs: build 
+          runs-on: ubuntu-latest
+          steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Build Docker image
+              run: docker build -t ${{secrets.DOCKER_HUB_USERNAME}}/fastapi-flash:latest .
+            
+            - name: Publish to Docker Registry 
+            uses: elgohr/Publish-Docker-Github-Action@v5 
+            with:
+              name: ${{secrets.DOCKER_HUB_USERNAME}}/fastapi-flash
+              username: ${{secrets.DOCKER_HUB_USERNAME}}  
+              password: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}  
