@@ -47,9 +47,9 @@ class Token(BaseModel):
         from_attributes = True
     
 class TokenData(BaseModel):
-    username: str | None = None
-    email:str | None = None
-    user_id: int = None
+    username: Optional[str] = None
+    email: Optional[str] = None
+    user_id: Optional[int] = None
     
 class PostMeta(PostBase):   # This Return Post Data with Owner Meta data:
     user: UserOut    # Same for What relation you mapped in models.

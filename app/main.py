@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-models.Base.metadata.create_all(bind=engine)   # No Longer required after alembic setup first time used.
+# models.Base.metadata.create_all(bind=engine)   # No Longer required after alembic setup first time used. Closed when pushing the code.
           
 @app.get("/")  
 def read_root():  
