@@ -4,3 +4,4 @@ __pycache__/
 instructions_.txt
 test_main.py
 research_wp.ipynb
+.env

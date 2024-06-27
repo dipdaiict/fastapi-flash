@@ -121,6 +121,18 @@ sudo adduser <username>
 sudo usermod -aG sudo <username>
 ```
 
+Change the User: if password needed then provide the password for login the user
+
+```bash
+su - <username>
+```
+
+See the Permission having new created user:
+
+```bash
+groups <username>
+```
+
 ## Set Up Your Backend Environment
 
 Navigate to your project directory and set up a virtual environment:
