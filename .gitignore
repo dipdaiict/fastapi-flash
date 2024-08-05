@@ -5,3 +5,8 @@ instructions_.txt
 test_main.py
 research_wp.ipynb
 .env
+*.pb
+*.txt
+*.log
+*.properties
+*.sonar_lock
