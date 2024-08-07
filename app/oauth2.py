@@ -1,8 +1,8 @@
 from .import schemas
 from .config import settings
-from typing import Annotated
 from pydantic import BaseModel
 from jose import jwt, JWTError
+from typing import Annotated, Union
 from passlib.context import CryptContext
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timedelta, timezone
@@ -16,7 +16,8 @@ EXPIRATION_TIME_OF_TOKEN = settings.expiration_time_of_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="authntication/login")
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+# def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
