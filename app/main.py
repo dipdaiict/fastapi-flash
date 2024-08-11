@@ -28,9 +28,9 @@ app.add_middleware(
 
 # models.Base.metadata.create_all(bind=engine)   # No Longer required after alembic setup first time used. Closed when pushing the code.
           
-@app.get("/")  
+@app.get("/")
 def read_root():  
-    return {"Message": "Welcome to the Home Page.. Hey Buddy, Congratulations Dip Patel for Successfully Deployment."} 
+    return {"Message": "Welcome to the Home Page! Congratulations Dip Patel on a successful deployment. Enjoy exploring FastAPI!"}
 
 app.include_router(posts.router)
 app.include_router(users.router)
