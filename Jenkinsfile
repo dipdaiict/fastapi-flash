@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'jenkins-dockerhub-integration'
-        DOCKER_IMAGE_NAME = 'dippdatel/jenkins-test'
+        DOCKER_IMAGE_NAME = 'dippdatel/fastapi-flash-jenkins'
         DOCKER_TAG = 'latest'
         GIT_REPO_URL = 'https://github.com/dipdaiict/fastapi-flash.git'
         SONARQUBE_URL = 'http://localhost:9000'
