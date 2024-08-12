@@ -11,6 +11,9 @@ pipeline {
         SONARQUBE_TOKEN = credentials('sonarqube-jenkins-integration-token') // Ensure this ID is correct
         SONARQUBE_SCANNER = "sonarscanner installation" // Ensure this name matches your SonarQube Scanner installation in Jenkins
         SONAR_PROJ_TOKEN = credentials('sonar-toke-fastapi-proj') // If this is the correct token
+        EC2_USER = 'ec2-user'
+        EC2_HOST = credentials('ec2-ip') // Use the secret text credential for IP address
+        EC2_KEY = credentials('fastapi-flash-backend') // Use the SSH private key credential
     }
 
     stages {
@@ -62,8 +65,22 @@ pipeline {
                 }
             }
         }
-    }
 
+        stage('Deploy Docker Container') {
+            steps {
+                script {
+                    // Deploy Docker container to EC2 instance
+                    sshagent(['fastapi-flash-backend']) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
+                        cd /home/dippatel/app/src/fastapi-flash &&
+                        docker run -d -p 8080:8080 --name fastapicontainer --env-file .env ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}
+                        "
+                        """
+                    }
+                }
+            }
+        }
     post {
         success {
             echo 'Pipeline completed successfully!'
